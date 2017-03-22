@@ -4,11 +4,17 @@ before_action :set_request_params, only: [:create]
   def index
     #check google authorization
     begin
-      credentials = Google::Auth::UserRefreshCredentials.new(client_id: ENV['GOOGLE_CLIENT_EMAIL'], client_secret: ENV['GOOGLE_CLIENT_SECRET'], scope: ["https://www.googleapis.com/auth/drive", "https://spreadsheets.google.com/feeds/"], redirect_uri: "/")
-      credentials.code = authorization_code
-      credentials.fetch_access_token!
-      session = GoogleDrive::Session.from_credentials(credentials)
-      @google_auth = 1
+
+      if authorization_code == nil
+        credentials = Google::Auth::UserRefreshCredentials.new(client_id: ENV['GOOGLE_CLIENT_EMAIL'], client_secret: ENV['GOOGLE_CLIENT_SECRET'], scope: ["https://www.googleapis.com/auth/drive", "https://spreadsheets.google.com/feeds/"], redirect_uri: "/")
+        session = GoogleDrive::Session.from_credentials(credentials)
+        redirect_to root_path
+      else
+        credentials.code = authorization_code
+        credentials.fetch_access_token!
+        session = GoogleDrive.login_with_oauth(credentials)
+        @google_auth = 1
+      end
       begin
         ws = session.spreadsheet_by_key(ENV['GOOGLE_SPREADSHEET_KEY']).worksheets[0]
         @google_auth = 2
