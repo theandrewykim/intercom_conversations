@@ -5,8 +5,8 @@ before_action :set_request_params, only: [:create]
     #check google authorization
     begin
 
-      if authorization_code == nil
-        credentials = Google::Auth::UserRefreshCredentials.new(client_id: ENV['GOOGLE_CLIENT_EMAIL'], client_secret: ENV['GOOGLE_CLIENT_SECRET'], scope: ["https://www.googleapis.com/auth/drive", "https://spreadsheets.google.com/feeds/"], redirect_uri: "/")
+      if defined?(authorization_code) == nil
+        credentials = Google::Auth::UserRefreshCredentials.new(client_id: "662603162232-7fr0jjm7a0lda0easvj8l7le77qp3u00.apps.googleusercontent.com", client_secret: "kGb3PoV4TU5gbwswIfSe3HqK", scope: ["https://www.googleapis.com/auth/drive", "https://spreadsheets.google.com/feeds/"], redirect_uri: "/")
         session = GoogleDrive::Session.from_credentials(credentials)
         redirect_to root_path
       else
